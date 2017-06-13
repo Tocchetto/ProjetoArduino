@@ -35,7 +35,6 @@ float fi = 0;
 
 void setup() 
 {
-  
   servo_1.attach(7);
   servo_2.attach(6);
   servo_3.attach(5);
