@@ -62,52 +62,39 @@ void moveServo(){
 }
 
 void defineAngles(int incomingByte){
-    teta =+ errx;
-    fi += erry;
-    moveServo();
-//  if(incomingByte == '5'){ //Centraliza
-//    teta = 0;
-//    fi = 0;
-//    Serial.write("Centraliza\n");
-//    moveServo();
-//  }
-//  if(incomingByte == '8'){ //(Desce (teta-1))
-//    Serial.write("8\n");
-//    teta += 0.5;
-//    moveServo();
-//  }
-//  if(incomingByte == '2'){ //Sobe  teta+1
-//    Serial.write("2\n");
-//    teta -= 0.5;
-//    moveServo();
-//  }
-//  if(incomingByte == '4'){ //Sobe fi+1
-//    Serial.write("4\n");
-//    fi += 0.5;
-//    moveServo();
-//  }
-//  if(incomingByte == '6'){ //Sobe fi+1
-//    Serial.write("6\n");
-//    fi -= 0.5;
-//    moveServo();
-//  }
+    if(x_cord < 795 && x_cord > 224){
+      if(y_cord < 683 && y_cord > 335 ){
+        teta += errx;
+        fi += erry;
+        moveServo();
+      }
+    }else{
+      teta = 0;
+      fi = 0;
+      Serial.write("Centraliza\n");
+      moveServo();
+    }
 }
 
 void loop() 
 {
-  
-  
-  //if (Serial.available() > 0) {
-    // read the incoming byte:
-    //incomingByte = Serial.read();
-    
-    //defineAngles(incomingByte);
-  //}
 
   if(touch()>0){
-    errx = centralx - x_cord;
-    erry = centraly - y_cord;
-    defineAngles(incomingByte);
+
+    if(x_cord < 800 && y_cord < 800){
+      errx = centralx - x_cord;
+      erry = centraly - y_cord;
+      teta -= errx * 0.05;
+      fi += erry * 0.05;
+      Serial.write("Bolinha\n");
+      moveServo();
+    }else{
+      teta = 0;
+      fi = 0;
+      Serial.write("Centraliza\n");
+      moveServo();
+    }
+
     Serial.print("Y: ");
     Serial.print(x_cord);
     Serial.print(" X: ");
