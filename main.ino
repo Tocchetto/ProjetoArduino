@@ -28,10 +28,18 @@ int ofsServo4 = 92;
 int ofsServo5 = 98;
 int ofsServo6 = 97;
 
+const int X1 = A0, Y1 = A1, X2 = A2, Y2 = A3;
+boolean touch();
+int x_cord = 0, y_cord = 0, val = 0, count = -1, arr[11], k = 0;
+
 int incomingByte = 0;
 
 float teta = 0;
 float fi = 0;
+
+int errx, errx_ant, erry, erry_ant;
+
+int centralx = 500, centraly = 500;
 
 void setup() 
 {
@@ -54,41 +62,86 @@ void moveServo(){
 }
 
 void defineAngles(int incomingByte){
-  if(incomingByte == '5'){ //Centraliza
-    teta = 0;
-    fi = 0;
-    Serial.write("Centraliza\n");
+    teta =+ errx;
+    fi += erry;
     moveServo();
-  }
-  if(incomingByte == '8'){ //(Desce (teta-1))
-    Serial.write("8\n");
-    teta += 0.5;
-    moveServo();
-  }
-  if(incomingByte == '2'){ //Sobe  teta+1
-    Serial.write("2\n");
-    teta -= 0.5;
-    moveServo();
-  }
-  if(incomingByte == '4'){ //Sobe fi+1
-    Serial.write("4\n");
-    fi += 0.5;
-    moveServo();
-  }
-  if(incomingByte == '6'){ //Sobe fi+1
-    Serial.write("6\n");
-    fi -= 0.5;
-    moveServo();
-  }
+//  if(incomingByte == '5'){ //Centraliza
+//    teta = 0;
+//    fi = 0;
+//    Serial.write("Centraliza\n");
+//    moveServo();
+//  }
+//  if(incomingByte == '8'){ //(Desce (teta-1))
+//    Serial.write("8\n");
+//    teta += 0.5;
+//    moveServo();
+//  }
+//  if(incomingByte == '2'){ //Sobe  teta+1
+//    Serial.write("2\n");
+//    teta -= 0.5;
+//    moveServo();
+//  }
+//  if(incomingByte == '4'){ //Sobe fi+1
+//    Serial.write("4\n");
+//    fi += 0.5;
+//    moveServo();
+//  }
+//  if(incomingByte == '6'){ //Sobe fi+1
+//    Serial.write("6\n");
+//    fi -= 0.5;
+//    moveServo();
+//  }
 }
 
 void loop() 
 {
-  if (Serial.available() > 0) {
+  
+  
+  //if (Serial.available() > 0) {
     // read the incoming byte:
-    incomingByte = Serial.read();
+    //incomingByte = Serial.read();
     
+    //defineAngles(incomingByte);
+  //}
+
+  if(touch()>0){
+    errx = centralx - x_cord;
+    erry = centraly - y_cord;
     defineAngles(incomingByte);
+    Serial.print("Y: ");
+    Serial.print(x_cord);
+    Serial.print(" X: ");
+    Serial.println(y_cord);
+    delay(500);
   }
+  
   delay(50);
+}
+
+boolean touch()
+{
+  boolean touch1 = false;
+
+  pinMode(X1, OUTPUT);
+  pinMode(X2, OUTPUT);
+  digitalWrite(X1, LOW);
+  digitalWrite(X2, HIGH);
+  pinMode(Y1, INPUT);
+  pinMode(Y2, INPUT);
+  delay(10);
+  y_cord = analogRead(Y2);
+
+  pinMode(Y1, OUTPUT);
+  pinMode(Y2, OUTPUT);
+  digitalWrite(Y1, LOW);
+  digitalWrite(Y2, HIGH);
+  pinMode(X1, INPUT);
+  pinMode(X2, INPUT);
+  delay(10);
+  x_cord = analogRead(X2);
+
+  if (x_cord > 0 && x_cord < 1000 && y_cord > 0 && y_cord < 1000)
+    touch1 = true;
+
+  return touch1;
 }
